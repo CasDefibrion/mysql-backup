@@ -1,0 +1,51 @@
+services:
+  mariadb:
+    image: mariadb:11.8
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=your-mariadb-root-password
+      - MARIADB_DATABASE=your-database-name
+      - MARIADB_USER=your-mariadb-user
+      - MARIADB_PASSWORD=your-mariadb-password
+
+  mysql-backup:
+    build: .
+    restart: unless-stopped
+    environment:
+      # MariaDB connection settings
+      - MYSQL_HOST=mariadb
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=your-mariadb-root-password
+      
+      # Backup configuration
+      - EXCLUDE_DATABASES=information_schema|performance_schema|mysql|sys  # Regex pattern for databases to exclude
+      
+      # S3 configuration
+      - S3_BUCKET=your-s3-bucket-name
+      - S3_PREFIX=mysql-backups
+      - S3_ENDPOINT_URL=https://s3.amazonaws.com  # Or your S3-compatible endpoint
+      - AWS_ACCESS_KEY_ID=your-aws-access-key
+      - AWS_SECRET_ACCESS_KEY=your-aws-secret-key
+      - AWS_DEFAULT_REGION=us-east-1
+      
+      # Retention settings (number of backups to keep)
+      - RETENTION_HOURLY=24    # Keep 24 hourly backups
+      - RETENTION_DAILY=7      # Keep 7 daily backups
+      - RETENTION_WEEKLY=4     # Keep 4 weekly backups
+      - RETENTION_MONTHLY=12   # Keep 12 monthly backups
+      
+      # Monitoring
+      - HONEYBADGER_CHECKIN_URL=https://api.honeybadger.io/v1/check_in/your-check-in-id
+      
+      # Initial backup
+      - SKIP_INITIAL_BACKUP=false  # Set to true to skip backup on container start
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb_data:

@@ -1,0 +1,18 @@
+# MySQL backup schedule
+# m h dom mon dow command
+
+# Source environment variables
+SHELL=/bin/bash
+BASH_ENV=/etc/environment
+
+# Hourly backup at minute 0
+0 * * * * . /etc/environment && /app/backup-mysql.sh hourly >> /var/log/mysql-backup.log 2>&1
+
+# Daily backup at 2:15 AM
+15 2 * * * . /etc/environment && /app/backup-mysql.sh daily >> /var/log/mysql-backup.log 2>&1
+
+# Weekly backup on Sunday at 3:30 AM
+30 3 * * 0 . /etc/environment && /app/backup-mysql.sh weekly >> /var/log/mysql-backup.log 2>&1
+
+# Monthly backup on 1st day at 4:45 AM
+45 4 1 * * . /etc/environment && /app/backup-mysql.sh monthly >> /var/log/mysql-backup.log 2>&1

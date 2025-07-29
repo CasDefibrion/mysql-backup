@@ -1,0 +1,31 @@
+# Docker compose with sensitive data
+docker-compose.yml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.env
+
+# Backup files
+*.sql
+*.sql.gz
+*.sql.zst
+*.snapshot
